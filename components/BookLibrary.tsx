@@ -1,41 +1,52 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Navbar from './Navbar';
-import HeroSection from './HeroSection';
-import BookCard from './BookCard';
-import BookModal from './BookModal';
-import Footer from './Footer';
-import { useBooks } from '@/src/hooks/useBooks';
-import { Book } from '@/src/services/bookService';
+import React, { useState } from 'react'
+import Navbar from './Navbar'
+import HeroSection from './HeroSection'
+import BookCard from './BookCard'
+import BookModal from './BookModal'
+import Footer from './Footer'
+import { Button } from '@/components/ui/button'
+import { useBooks } from '@/src/hooks/useBooks'
+import { Book } from '@/src/services/bookService'
 
 export default function BookLibrary() {
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
 
-  const { 
-    books, 
-    loading, 
-    loadingMore, 
-    searchQuery, 
-    setSearchQuery, 
-    loadMore 
-  } = useBooks();
+  const {
+    books,
+    loading,
+    loadingMore,
+    error,
+    freeOnly,
+    setFreeOnly,
+    searchQuery,
+    setSearchQuery,
+    loadMore,
+    retry,
+  } = useBooks()
 
   const openBookDetails = (book: Book) => {
-    setSelectedBook(book);
-  };
+    setSelectedBook(book)
+  }
 
   const closeModal = () => {
-    setSelectedBook(null);
-  };
+    setSelectedBook(null)
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar 
-        searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-      />
+      <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <main className="container mx-auto px-4 py-8">
         {!searchQuery && <HeroSection />}
+        <div className="mb-5 flex justify-end">
+          <Button
+            variant={freeOnly ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFreeOnly((prev) => !prev)}
+          >
+            {freeOnly ? 'Miễn Phí' : 'Trả Phí'}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {loading ? (
@@ -48,7 +59,7 @@ export default function BookLibrary() {
             ))
           ) : books.length > 0 ? (
             books.map((book, index) => (
-              <BookCard 
+              <BookCard
                 key={`${book.id}-${index}`}
                 book={book}
                 index={index}
@@ -59,7 +70,16 @@ export default function BookLibrary() {
             ))
           ) : (
             <div className="col-span-full py-20 text-center text-muted-foreground">
-              Không tìm thấy sách nào. Thử từ khóa khác xem sao!
+              <p>
+                {error || 'Không tìm thấy sách nào. Thử từ khóa khác xem sao!'}
+              </p>
+              <button
+                type="button"
+                onClick={retry}
+                className="mt-4 inline-flex rounded-md border border-primary/30 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+              >
+                Thử lại
+              </button>
             </div>
           )}
         </div>
@@ -73,10 +93,7 @@ export default function BookLibrary() {
 
       <Footer />
 
-      <BookModal 
-        book={selectedBook} 
-        onClose={closeModal} 
-      />
+      <BookModal book={selectedBook} onClose={closeModal} />
     </div>
-  );
+  )
 }

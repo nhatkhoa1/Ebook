@@ -12,21 +12,36 @@ export interface Book {
   language: string;
   pdfAvailable: boolean;
   pdfDownloadLink: string | null;
+  saleability: string;
+  isFree: boolean;
 }
 
 const GOOGLE_BOOKS_API = 'https://www.googleapis.com/books/v1/volumes';
 
 export const BookService = {
-  async searchBooks(query: string, lang: string = 'vi', startIndex: number = 0): Promise<Book[]> {
+  async searchBooks(
+    query: string,
+    lang: string = 'vi',
+    startIndex: number = 0,
+    freeOnly: boolean = false
+  ): Promise<Book[]> {
     try {
+      const params: Record<string, string | number> = {
+        q: query || 'sách hay',
+        maxResults: 20,
+        startIndex: startIndex,
+        orderBy: 'relevance',
+      };
+
+      if (lang) {
+        params.langRestrict = lang;
+      }
+      if (freeOnly) {
+        params.filter = 'free-ebooks';
+      }
+
       const response = await axios.get(GOOGLE_BOOKS_API, {
-        params: {
-          q: query || 'sách hay',
-          langRestrict: lang,
-          maxResults: 20,
-          startIndex: startIndex,
-          orderBy: 'relevance',
-        },
+        params,
       });
 
       return (response.data.items || []).map((item: any) => ({
@@ -41,6 +56,12 @@ export const BookService = {
         language: item.volumeInfo.language || 'N/A',
         pdfAvailable: Boolean(item.accessInfo?.pdf?.isAvailable),
         pdfDownloadLink: item.accessInfo?.pdf?.downloadLink || null,
+        saleability: item.saleInfo?.saleability || 'UNKNOWN',
+        isFree:
+          item.saleInfo?.saleability === 'FREE' ||
+          item.saleInfo?.saleability === 'FOR_FREE' ||
+          item.saleInfo?.saleability === 'FREE_SAMPLE' ||
+          item.saleInfo?.saleability === 'PUBLIC_DOMAIN',
       }));
     } catch (error) {
       console.error('Error fetching books:', error);
@@ -48,8 +69,8 @@ export const BookService = {
     }
   },
 
-  async getFeaturedBooks(): Promise<Book[]> {
+  async getFeaturedBooks(startIndex: number = 0, freeOnly: boolean = false): Promise<Book[]> {
     // Fetch some popular Vietnamese books
-    return this.searchBooks('văn học Việt Nam');
+    return this.searchBooks('văn học Việt Nam', 'vi', startIndex, freeOnly);
   }
 };
