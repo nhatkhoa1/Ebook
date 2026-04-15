@@ -5,8 +5,8 @@ import BookCard from './BookCard'
 import BookModal from './BookModal'
 import Footer from './Footer'
 import { Button } from '@/components/ui/button'
-import { useBooks } from '@/src/hooks/useBooks'
-import { Book } from '@/src/services/bookService'
+import { useBooks } from '@/hooks/useBooks'
+import { Book } from '@/services/bookService'
 
 export default function BookLibrary() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)

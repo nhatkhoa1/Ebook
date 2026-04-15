@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Book } from '@/src/services/bookService';
+import { Book } from '@/services/bookService';
 
 type BookCardProps = {
   book: Book;

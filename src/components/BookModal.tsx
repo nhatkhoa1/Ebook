@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Book } from '@/src/services/bookService';
-import { TranslationService } from '@/src/services/translationService';
-import { ExtractedPage, TextExtractionService } from '@/src/services/textExtractionService';
+import { Book } from '@/services/bookService';
+import { TranslationService } from '@/services/translationService';
+import { ExtractedPage, TextExtractionService } from '@/services/textExtractionService';
 
 type BookModalProps = {
   book: Book | null;
