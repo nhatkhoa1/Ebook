@@ -16,6 +16,7 @@ export default function BookLibrary() {
     loading,
     loadingMore,
     error,
+    cacheNotice,
     freeOnly,
     setFreeOnly,
     searchQuery,
@@ -38,6 +39,15 @@ export default function BookLibrary() {
 
       <main className="container mx-auto px-4 py-8">
         {!searchQuery && <HeroSection />}
+        {cacheNotice && (
+          <div
+            className="mb-4 rounded-lg border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:text-amber-100"
+            role="status"
+          >
+            {cacheNotice}
+          </div>
+        )}
+
         <div className="mb-5 flex justify-end">
           <Button
             variant={freeOnly ? 'default' : 'outline'}
